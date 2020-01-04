@@ -1,0 +1,20 @@
+<apex:page standardController="Opportunity">
+    <script src="/soap/ajax/43.0/connection.js" />
+    <script>
+    	function updateEmail() 
+    	{
+            result = sforce.connection.query("Select Name, Id from Opportunity");
+            records = result.getArray("records");
+            for (var i=0; i< records.length; i++) {
+                var record = records[i];
+                console.log(record.Name + " -- " + record.Id);
+			}
+        }
+    updateEmail() ;
+    </script>
+    <apex:form >
+    	<apex:pageBlock title="Opportunity Details">
+        	<apex:outputField value="{!Opportunity.Name}"/>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

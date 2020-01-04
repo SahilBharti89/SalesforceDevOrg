@@ -1,0 +1,3 @@
+<apex:page docType="html"  readOnly="true" sidebar="false">
+<iframe height="900px" style="border:none;" id="theIframe" name="theIframe" src="/apex/NewTgen" width="100%"></iframe>
+</apex:page>

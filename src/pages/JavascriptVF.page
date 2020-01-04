@@ -1,0 +1,23 @@
+<apex:page id="pg">
+    <apex:form id="fm">
+        <apex:inputText id="Name" onchange="show()" style="color:red"/>
+        <script>
+        	function show(){
+                alert('Test Message');
+                var myName=document.getElementById('pg:Name').value;
+                alert('My Name is =>'+myName);
+             }
+        	function demo() {
+                alert('Demo is calling');
+                var myAge=document.getElementById('pg:fm:pb2:age').value;
+                alert('My Age is =>'+myAge);
+             }
+        </script>
+        <br/>
+        <br/>
+        <apex:pageBlock id="pb2">
+            <apex:inputText id="age" onchange="demo()"/>
+            <input type="button" value="Click" onclick="show()"/>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

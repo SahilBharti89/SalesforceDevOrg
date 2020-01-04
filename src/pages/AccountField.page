@@ -1,0 +1,43 @@
+<apex:page standardController="Account" extensions="ContactDetails">
+    
+    <apex:form id="myForm">
+        
+    	<apex:pageBlock title="Account Details">
+        	<apex:pageBlockSection >
+            	<apex:outputField value="{!Account.Name}"/>
+                <apex:outputField value="{!Account.Industry}"/>
+                <apex:outputField value="{!Account.Phone}"/>
+                <apex:outputField value="{!Account.Website}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:pageBlock title="Contact Details" id="contactTable">
+           <!-- <apex:inputCheckbox value="{!mainBoxValue}">
+                	<apex:actionSupport event="onClick" action="{!processSelected}" reRender="table2"/>
+            </apex:inputCheckbox> -->
+            <!-- <apex:pageBlockButtons>
+                	<apex:commandButton value="Selected Contacts" action="{!processSelected}" reRender="table2"/>
+                </apex:pageBlockButtons> -->
+        	<apex:pageBlockTable value="{!wrapcontactList}" var="c">
+                
+                <apex:column >
+                    <apex:facet name="header">
+                    	Select
+                    </apex:facet>
+                    <apex:inputCheckbox value="{!c.isSelect}" onchange="method1();return false;"/>
+                </apex:column>
+            	<apex:column value="{!c.cont.Name}" />
+            </apex:pageBlockTable>
+            <apex:pageBlockTable value="{!selectedContacts}" id="table2" var="ct" title="Selected Contacts">
+            	<apex:column value="{!ct.Id}" headerValue="Contact Id"/>
+                <apex:column value="{!ct.Name}" headerValue="Contact Name"/>
+                <apex:column value="{!ct.Email}" headerValue="Contact Email"/>
+                <apex:column value="{!ct.Phone}" headerValue="Contact Phone"/>
+                <apex:column value="{!ct.Department}" headerValue="Contact Department"/>
+                <apex:column value="{!ct.BirthDate}" headerValue="Contact BirthDate"/>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+     	<apex:actionFunction action="{!processSelected}" name="method1" reRender="table2">
+        </apex:actionFunction>
+    </apex:form>
+    
+</apex:page>

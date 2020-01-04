@@ -1,0 +1,50 @@
+<apex:page standardcontroller="Account" extensions="AcctWithContactBirthDayController" sidebar="false">
+    <style>
+        .center {
+            text-align: center;
+            border: 3px solid green;
+        }
+    </style>
+    
+    <apex:form >
+        <table>
+            <label><b>Account Name</b></label> &nbsp; &nbsp; &nbsp;
+            <b><apex:outputText value="{!Account.Name}" style="font-style:italic">
+                </apex:outputText> </b> <br/> <br/>
+            <div class="center">
+                <h1>Displaying Birthday Month of Contacts Based on Contact's Birthday</h1> 
+            </div> <br/>
+            <thead>
+                <tr>
+                    <th>Contact Name</th>
+                    <apex:repeat value="{!monthsList}" var="month">
+                        <th>{!MonthName1[month]}</th> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                    </apex:repeat>
+                </tr>
+            </thead>
+            
+            <tbody>
+                <apex:repeat value="{!wrapConList}" var="wrap">
+                    <tr>
+                        <td>
+                            {!wrap.lName}
+                        </td> 
+                        <apex:repeat value="{!monthsList}" var="birth">
+                        
+                            <apex:repeat value="{!wrap.BirthMonthsMap}" var="m">
+                             <td>
+                                <apex:outputtext rendered="{!m == birth}">
+                                   
+                                        {!wrap.BirthMonthsMap[m]}
+                                    
+                                </apex:outputtext>
+                                </td>
+                            </apex:repeat>
+                            
+                        </apex:repeat>
+                    </tr>
+                </apex:repeat>
+            </tbody>
+        </table>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,38 @@
+<apex:page controller="StartAndEndDateContactBirthdayController" docType="html-5.0" >
+    
+    <apex:form id="frm">
+     	<b>Start Date </b> &nbsp; &nbsp; <apex:input type="date" value="{!startDate}"/> &nbsp;
+       <b>End Date</b> &nbsp; &nbsp; <apex:input type="date" value="{!endDate}"/> &nbsp;
+        <input type="button" value="Submit" onclick="MonthVal();return false;"/><br/><br/>
+        <apex:actionFunction name="MonthVal" action="{!onSubmit}" reRender="frm"></apex:actionFunction>
+        <table>
+            <thead>  
+                <tr>  
+                    <th>Account Name</th>
+                    <th>ContactsSum</th>&nbsp;&nbsp;&nbsp;
+                    <apex:repeat value="{!MonthName1}" var="mm">
+                        <th>{!MonthName1[mm]}</th>  
+                    </apex:repeat>
+                </tr>
+            </thead>
+           
+            <tbody>   
+                <apex:repeat value="{!wrapAccList}" var="wra">
+                    <tr>
+                        <td>
+                            {!wra.AccountName}
+                        </td>
+                        <td>
+                            {!wra.contactCount} 
+                        </td> 
+                        <apex:repeat value="{!wra.monthVsContacts}" var="mon">
+                            <td>
+                                {!wra.monthVsContacts[mon]} 
+                            </td> 
+                        </apex:repeat>
+                    </tr>
+                </apex:repeat>                
+            </tbody>
+        </table>
+    </apex:form>
+</apex:page>

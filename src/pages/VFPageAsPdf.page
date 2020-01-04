@@ -1,0 +1,5 @@
+<apex:page standardController="Account" renderAs="pdf">
+    <center>
+    	<h1> Welcome to Salesforce Tutorial! </h1>
+    </center>
+</apex:page>

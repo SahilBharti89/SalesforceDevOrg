@@ -1,0 +1,33 @@
+<apex:page controller="AcWithContactCount"  >
+    <apex:form >
+        <table>
+            <thead>
+                <tr>
+                    <th>Account Name</th>
+                    <th>Number of Contacts</th>
+                    <apex:repeat value="{!MonthName1}" var="month">
+                        <th>{!MonthName1[month]}</th>  
+                    </apex:repeat>
+                </tr>
+            </thead>
+            
+            <tbody>
+                <apex:repeat value="{!wrapAccList}" var="wrap">
+                    <tr>
+                        <td>
+                            {!wrap.AccountName}
+                        </td>
+                        <td>
+                            {!wrap.contactCount}
+                        </td>
+                        <apex:repeat value="{!wrap.monthVsContacts}" var="mon">
+                            <td>
+                                {!wrap.monthVsContacts[mon]}
+                            </td>
+                        </apex:repeat>
+                    </tr>
+                </apex:repeat>
+            </tbody>
+        </table>
+    </apex:form>
+</apex:page>

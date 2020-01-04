@@ -1,0 +1,9 @@
+<apex:page controller="AccountWithContact">
+	<apex:form >
+		<apex:pageBlock >
+			<apex:repeat value="{!acWithCont}" var="ac">
+				{!acWithCont[ac]}
+			</apex:repeat>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

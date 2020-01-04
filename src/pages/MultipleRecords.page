@@ -1,0 +1,31 @@
+<apex:page controller="MultipleRecords">
+    <script>
+    	function validate() {
+        	if(document.getElementById('frm:pgBlck:tbl1:accNumber').value == '')
+        		alert("Can't be blank!");
+        }
+    </script>
+    <apex:form id="frm">
+        <apex:pageBlock title="Multiple Records Example" id="pgBlck">
+            <apex:pageBlockTable value="{!listAccount}" var="acc" id="tbl1">
+                <apex:column headerValue="Account Name">
+                    <apex:inputField value="{!acc.Name}"/>
+                </apex:column>
+                <apex:column headerValue="Account Number">
+                    <apex:inputField value="{!acc.AccountNumber}" id="accNumber"/>
+                </apex:column>
+                <apex:column headerValue="Account Type">
+                    <apex:inputField value="{!acc.Type}"/>
+                </apex:column>
+                <apex:column headerValue="Industry">
+                    <apex:inputField value="{!acc.Industry}"/>
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Add Accounts Row" action="{!addAccount}"/>
+                <apex:commandButton value="Delete Accounts Row" action="{!deleteAccount}"/>
+                <apex:commandButton value="Save Accounts"  onclick="validate();"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

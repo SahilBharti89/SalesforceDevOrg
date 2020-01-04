@@ -1,0 +1,27 @@
+<apex:page controller="SubSearchController">
+    
+    <apex:form >
+    	<apex:pageBlock id="pb">
+        	<apex:pageBlockButtons >
+                <apex:commandButton action="{!searchRecords}" value="Search" rerender="pb"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="2">
+                <apex:outputLabel value="Account Id" />
+                <apex:inputText value="{!Id}"/>
+                <apex:outputLabel value="Account Name" />
+                <apex:inputText value="{!Name}"/>
+                <apex:outputLabel value="Phone Number"/>
+                <apex:inputText value="{!phone}"/>
+                <apex:outputLabel value="Account Website" />
+                <apex:inputText value="{!website}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockTable var="record" value="{!records}" id="pbTable">
+                <apex:column value="{!record.Id}" />
+                <apex:column value="{!record.Name}" />
+                <apex:column value="{!record.phone}" />
+                <apex:column value="{!record.website}" />
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+    
+</apex:page>

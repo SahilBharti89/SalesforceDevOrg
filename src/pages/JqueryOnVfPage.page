@@ -1,0 +1,42 @@
+<apex:page >
+	
+	<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+	<apex:form >
+	   	<apex:includeScript value="{!URLFOR($Resource.fullcalendar,'/fullcalendar/jquery.min.js')}" />  
+		
+		<apex:pageBlock title="First Block" id="pb1" onMouseOver="show()">
+			This is Block 1
+		</apex:pageBlock>	
+		<apex:pageBlock title="Second Block" id="pb2" >
+			This is Block 2
+		</apex:pageBlock> <br/>
+		
+		<apex:pageBlock title="Third Block" id="pb3" >
+			<apex:inputText id="name" onchange="copyValues()" />
+		</apex:pageBlock>
+		
+		<apex:pageBlock title="Fourth Block" id="pb4" >
+			<apex:inputText id="pb4Input" />
+		</apex:pageBlock>
+		
+	</apex:form>
+	
+	<script>
+		j$ = jQuery.noConflict();
+		if(j$) {
+			alert('Jquery Loaded Successfully !');
+		}
+		
+		function show() {
+			//alert('Show is  Calling..');
+			j$('[id$=pb2]').toggle();
+		}
+		
+		function copyValues() {
+			alert('copyValues is  Calling..');
+			var itemValue = j$('[id$=name]').val();
+			alert('Item Value is ==> '+itemValue);
+			j$('[id$=pb4Input]').val(itemValue);
+		}
+	</script>
+</apex:page>

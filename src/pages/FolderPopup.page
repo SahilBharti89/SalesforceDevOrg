@@ -1,0 +1,7 @@
+<apex:page standardController="Folder" tabStyle="Folder">
+    <apex:form >
+        <apex:inputHidden value="{!Folder.Id}"/>
+        <apex:inputField value="{!Folder.Name}"/>
+    </apex:form>
+    
+</apex:page>

@@ -1,0 +1,11 @@
+<apex:page sidebar="false" showHeader="false">
+    <h1>Hello "{!$User.FirstName} {!$User.LastName}" Welcome to Salesforce</h1>
+    <p> Today's Date is {! TODAY()} </p>
+    <p> Next week it will be {! TODAY() + 7} </p>
+    <p>The year today is {! YEAR(TODAY())}</p>
+    <p>Tomorrow will be day number {! DAY(TODAY() + 1)}</p>
+    <p>Let's find a maximum: {! MAX(1,2,3,4,5,6,5,4,3,2,1)} </p>
+    <p>The square root of 49 is {! SQRT(49)}</p>
+    <p>force.com Contains salesforce.com? {! CONTAINS('salesforce.com', 'force.com')}</p>
+    
+</apex:page>

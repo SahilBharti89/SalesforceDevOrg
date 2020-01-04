@@ -1,0 +1,6 @@
+<apex:page standardController="Account" >
+    <script>
+    	if(!Account.Opportunity_Count__c)
+            alert('Display Alert!');
+    </script>
+</apex:page>

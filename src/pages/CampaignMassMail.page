@@ -1,0 +1,145 @@
+<apex:page standardController="Campaign" extensions="CampaignMassMailController">
+
+   <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" />
+   <script src="https://cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
+   
+    <apex:form >
+        <apex:pageBlock title="Schedule via MassMailer">
+        	 <apex:pageBlockButtons >
+            	<apex:commandButton action="{!save}" value="Save"/>&nbsp;&nbsp;&nbsp;&nbsp;
+            	<apex:commandButton action="{!cancel}" value="Cancel"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="1" title="Campaign Control">
+                Campaign &nbsp;&nbsp; <apex:inputField value="{!Campaign.Name}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1" title="Bcc Options">
+                Bcc Me &nbsp;&nbsp; <input type="checkbox" /><br/>
+                Global Bcc &nbsp;&nbsp; <input type="checkbox"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1" title="Sender Options"> 
+                 <input type="radio" /> Logged In User &nbsp;&nbsp;
+                 <input type="radio"/> Global Sender &nbsp;&nbsp;
+                 <input type="radio"/> Record Owner <br/>
+                 Sender Name <input type="text"/> <br/>
+                 Sender Email <input type="text"/> <br/>
+                 Reply To <input type="text"/> <br/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1" title="Template Selection">
+            <p>Please select an email template to use. To create a new template, 
+            you must exit this mass email process and create the new template in your personal setup section. </p><br/>
+               <apex:pageBlockSectionItem id="item1">
+                     <apex:outputLabel value="Folder Name"/>
+                     <apex:outputPanel >
+                        <apex:inputHidden value="{!folderId}" id="foldid"/>
+                        <apex:inputText value="{!folderName}" id="foldname" />
+                        <a href="#" onclick="openLookupPage();return false;">Select Folder LookUp
+                        </a><br/>   
+                        <apex:inputHidden value="{!templateId}" id="tempid"/>
+                        <apex:outputText value="{!templateName}" id="tempName" />
+                        <a href="#" onclick="templateLookup('{!folderId}');return false;">Select Template LookUp
+                        </a> <br/>
+                        <apex:actionFunction name="SubmitCall" action="{!onSubmit}" reRender="textField" oncomplete="reloadCKEditor();">
+                        	<apex:param value="" assignTo="{!templateId}" name="tempval"/>
+                        </apex:actionFunction>
+                        <apex:CommandButton id="btn" value="Submit"  onclick="fn();return false;">
+                           
+                        </apex:CommandButton> <br/>
+            
+                        
+                        <!--  previous code
+                        <input type="button" value="Submit" onclick="onSubmitJS()" />  
+                         <apex:actionFunction action="{!onSubmit}" name="passToController" reRender="template" >
+                           <apex:param value="" assignTo="{!templateId}" name="tempval"/>
+                         </apex:actionFunction>
+                         <script>
+                           function onSubmitJS() {
+                              var str = document.getElementById('j_id0:j_id1:j_id2:j_id12:item1:tempid').value;
+                              console.log(str);
+                              passToController(str);
+                           }
+                         </script> -->
+                     </apex:outputPanel>
+               </apex:pageBlockSectionItem>
+            	</apex:pageBlockSection>
+                <apex:pageBlockSection columns="1">
+                    <script type="text/javascript" >
+                       $j = jQuery.noConflict();
+                          $j(function() {
+                            // reloadCKEditor();
+                          }
+                          )
+                          
+                          function fn(){
+                          	var vv= document.getElementById('j_id0:j_id3:j_id4:j_id16:item1:tempid').value;
+                          	SubmitCall(vv);
+                          }
+                          
+                    </script>
+                    <apex:pageBlockSectionItem >
+                       <apex:outputLabel >Rich Text Area</apex:outputLabel> 
+                       <apex:outputPanel >
+                          <apex:inputTextArea id="textField" value="{!emlt.body}" richText="false" styleClass="ckeditor" />
+                         
+                       </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+               </apex:pageBlockSection>
+           <!-- <apex:outputPanel id="template">
+                 <apex:inputtextarea richtext="false"  value="{!emlt.body}" cols="150" rows="10"/> 
+            </apex:outputPanel> -->
+        </apex:pageBlock>
+        <script>
+      var newWindow=null;
+      function openLookupPage() {
+         var url="/apex/EmailTemplateController";
+         //var url="/apex/TemplateFilesVFPages";
+         newWindow=window.open(url,'popup','height=500,width=600,left=100,top=100,resizable=no,scrollbars=yes,toolbar=no,status=no');
+         if(window.focus) {
+            newWindow.focus();
+         }
+         return false;
+      }
+      function closeLookupPage(name,id) {
+      console.log(name);
+      console.log('ooooo'+id);
+         if(null != newWindow) {
+            newWindow.close();
+         }
+         document.getElementById('j_id0:j_id3:j_id4:j_id16:item1:foldid').value = id;
+        // $('foldname').innerHtml = name;
+        document.getElementById('j_id0:j_id3:j_id4:j_id16:item1:foldid').innerHTML = name;
+         console.log(id);
+         
+      }
+      function closeLookupPage1(id) {
+      console.log('ooooo'+id);
+         if(null != newWindow) {
+            newWindow.close();
+         }
+         document.getElementById('j_id0:j_id3:j_id4:j_id16:item1:tempid').value = id;
+         console.log('lohuyuuy'+document.getElementById('j_id0:j_id3:j_id4:j_id16:item1:tempid').value);
+         
+      }
+      function templateLookup(formId) {
+         console.log(formId);  
+         console.log(document.getElementById('j_id0:j_id3:j_id4:j_id16:item1:foldid').value);
+         //var id = document.getElementById('j_id0:j_id1:j_id2:j_id12:item1:tempid').value;
+         var url = "/apex/TemplateFilesVFPages?parentid="+document.getElementById('j_id0:j_id3:j_id4:j_id16:item1:foldid').value;
+         newWindow=window.open(url,'popup','height=500,width=600,left=100,top=100,resizable=no,scrollbars=yes,toolbar=no,status=no');
+         //console.log('jhjhjhjh'+document.getElementById('j_id0:j_id1:j_id2:j_id12:item1:tempid').value);
+         //closeLookupPage('Test',formId);
+         if(window.focus) {
+            newWindow.focus();
+         }
+         return false;
+      }
+   </script>
+        <script type="text/javascript">
+      function reloadCKEditor() {
+         CKEDITOR.replaceAll('ckeditor');
+      }
+      function setCKEditorValues() {
+         $j("[id$='textHidden']").val(CKEDITOR.instances[$j("[id$='textField']").attr('id')].getData());
+      }
+   </script>
+    </apex:form>
+</apex:page>

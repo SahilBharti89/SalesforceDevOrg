@@ -1,0 +1,1370 @@
+<apex:page showHeader="false" sidebar="false" standardStylesheets="false" docType="html" controller="tgen.CodeCoverageController" readOnly="true" >
+<html>
+<head>
+    <title>Test Class Generator</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    
+    <apex:includeScript value="{!URLFOR($Resource.tgen__TestResource,'js/jquery-3.2.0.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.tgen__TestResource,'js/jquery-ui.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.tgen__TestResource,'js/bootstrap.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.tgen__TestResource,'js/bootstrap-multiselect.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.tgen__CustomTree,'js/treeCustomJS.js')}"/>
+    <link rel="stylesheet" href="{!URLFOR($Resource.tgen__CustomTree,'css/treeCustomStyle.css')}" />
+
+    <!-- Include Bootstrap CSS -->
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>-->
+    <!-- Optional Bootstrap theme -->
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous"/>-->
+
+    <!-- Include SmartWizard CSS -->
+    <link href="{!URLFOR($Resource.TgenResource,'css/bootstrap.min.css')}" rel="stylesheet" type="text/css"/> 
+    <link href="{!URLFOR($Resource.TgenResource,'css/bootstrap-theme.min.css')}" rel="stylesheet" type="text/css"/> 
+    <link href="{!URLFOR($Resource.TgenResource,'css/smart_wizard.css')}" rel="stylesheet" type="text/css"/>   
+    <link href="{!URLFOR($Resource.TgenResource,'css/custom.css')}" rel="stylesheet" type="text/css" />
+    <link href="{!URLFOR($Resource.TgenResource,'css/font-awesome.css')}" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="{!URLFOR($Resource.tgen__Popups,'css/popcss.css')}" />
+    
+    <!-- Optional SmartWizard theme -->
+
+    <link href="{!URLFOR($Resource.TgenResource,'css/smart_wizard_theme_arrows.css')}" rel="stylesheet" type="text/css" />
+
+    <!-- Include SmartWizard JavaScript source -->
+    <script type="text/javascript" src="{!URLFOR($Resource.TgenResource,'js/jquery.smartWizard.min.js')}"></script>
+    <!-- changes by rajnish -->
+    
+    <link rel="stylesheet" href="{!URLFOR($Resource.tgen__TestResource,'css/bootstrap-multiselect.css')}" />
+    <link rel="stylesheet" href="{!URLFOR($Resource.tgen__TestResource,'css/jquery-ui.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.tgen__snippet,'public/jquery.syntax.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.tgen__snippet,'public/jquery.syntax.cache.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.tgen__chosen,'chosen.jquery.min.js')}" />
+    <link rel="stylesheet" href="{!URLFOR($Resource.tgen__chosen,'chosen.css')}" />
+    <link href="{!URLFOR($Resource.tgen__ICheckResource,'skins/line/blue.css')}" rel="stylesheet"/>
+    <link rel="stylesheet" href="{!URLFOR($Resource.newCustomCSS,'cusotmCss.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.tgen__ICheckResource,'icheck.js')}"/>
+    <link href="{!URLFOR($Resource.tgen__Custom,'css/style.css')}" rel="stylesheet"/>
+    <apex:includeScript value="{!URLFOR($Resource.tgen__Custom,'js/custom.js')}"/>
+    
+
+    <script type="text/javascript">
+var newId=0;
+var newId2=0;
+$(document).ready(function(){
+var isUseCase=true;
+setTimeout(function(){ 
+    $('.navbar-btn .btn-default').on('click',function(){
+    if($('#smartwizard2 .active span').text() == "3"){
+        $('.tab-content').css('height','450px');
+    }
+    if($('#smartwizard2 .active span').text() == "2"){
+        $('.tab-content').css('height','755px');
+    }
+    if($('#smartwizard2 .active span').text() == ""){
+        $('.tab-content').css('height','auto');
+    }    
+});
+}, 2000);
+
+    $('input[name="isTriger"]').click(function(){
+        //$('#dvTriggerObjects').toggle();
+
+        if($('input[name="isTriger"]:checked').data('trigger') == true){
+            $('#b-option').data('checked',true);
+            $('#process').addClass('disabled');
+            $('.sw-btn-next').removeClass('disabled'); 
+        }else{
+            $('#b-option').data('checked',false)
+            $('#process').removeClass('disabled');
+            $('.sw-btn-next').addClass('disabled'); 
+        }        
+    });
+    $('#rightIcon_desktop').click(function(){
+        if($('#rightPanel option').length>0){
+            $('#showFieldsBtn').removeClass('disabled');
+            $('.sw-btn-next').addClass('disabled');
+        }
+    });
+    $('#leftIcon_desktop').click(function(){
+      if($('#rightPanel option').length==0){
+          $('#showFieldsBtn').addClass('disabled');
+          $('.sw-btn-next').removeClass('disabled');
+      }
+    });
+    
+    $("#drop1").chosen({ "disable_search": true }); 
+    $("#drop2").chosen({ "disable_search": true });
+    $("#t2drop1").chosen({"disable_search": true });
+    
+ /*   $( "#pop-dialog-box").dialog({
+        modal: true,
+        position: 'center',
+        resizable: false,
+        draggable: false,
+        autoOpen: false,
+        closeOnEscape: true,
+        open: function(event, ui) { $('.ui-widget-overlay').bind('click', function(){ $("#pop-dialog-box").dialog('close'); }); }
+});*/
+$('#pop-dialog-box').parent().addClass('setProductPreferences-popup');
+$('.pop_container .chosen-container').css('margin-right','6px');
+
+$( "#tabs" ).tabs();
+
+$('.add-icon-p').click(function(){
+
+    var totContent = $('.rows-pane').children('div').length;
+        if(totContent==($('#drop1 > option').length-1)){
+        alert("You can add only "+totContent+" rows.");
+        return true;
+        }
+        else{
+        newId=newId+1;
+        $( '.rows-pane' ).append("<div class='rows col-xs-12 col-sm-12 col-md-12 col-lg-12 nopadding'/>")
+        $('#drop1').clone().appendTo(".rows-pane > .rows");
+        var d1=$('[id="drop1"]');
+        
+        $(d1[1]).attr('id',$(d1[1]).attr('id')+newId);
+        $('#drop2').clone().appendTo(".rows-pane > .rows");
+        var d2=$('[id="drop2"]');
+        
+        $(d2[1]).attr('id',$(d2[1]).attr('id')+newId);
+        
+        //$('.rows-pane > .rows').append("<button  class='cancel-icon btn btn-primary add-btn btn-lg pull-right' type='button'>Remove</button>");
+        $('.rows-pane > .rows').append("<img class='remove-icon-p' title='Remove' style='padding-left:4px;' src='{!URLFOR($Resource.Popups,'images/remove-p.png')}' />");
+        $(".chosenselectdrop").chosen({
+          "disable_search": true
+        });
+        $( '.rows-pane > .rows').wrap( "<div class='dontwrap col-xs-12 col-sm-12 col-md-12 col-lg-12 nopadding' style='padding-bottom:5px;'/>");
+       
+        //$('.chosenselectdrop').trigger("chosen:updated");
+        $('.pop_container .chosen-container').css('width','225px');
+        $(' .rows-pane .chosen-container').css('margin-right','11px');
+     
+        
+        }
+});
+
+$('.add-icon-p2').click(function(){
+
+    var totContent = ($($('.dropdown-menu')[0]).find('li').length-1);
+        if(totContent==$('.dropdown-menu').length){
+        alert("You can add only "+totContent+" rows.");
+        return true;
+        }
+        else{
+        newId2=newId2+1;
+        $( '.rows-pane-2' ).append("<div class='rows col-xs-12 col-sm-12 col-md-12 col-lg-12 nopadding'/>")
+        $('#t2drop1').clone().appendTo(".rows-pane-2 > .rows");
+        var d1=$('[id="t2drop1"]');
+
+        $(d1[1]).attr('id',$(d1[1]).attr('id')+newId2);
+        
+        $('#t2drop2').clone().appendTo(".rows-pane-2 > .rows");
+        var d2=$('[id="t2drop2"]');
+        $(d2[1]).attr('id',$(d2[1]).attr('id')+newId2);
+        
+        $('#recId').clone().appendTo(".rows-pane-2 > .rows");
+        var d3=$('[id="recId"]');
+        $(d3[1]).attr('id',$(d3[1]).attr('id')+newId2);
+                
+        $('.rows-pane-2 > .rows').append("<img class='remove-icon-p2' title='Remove' style='padding-left:10px;cursor:pointer;' src='{!URLFOR($Resource.Popups,'images/remove-p.png')}' />");
+        
+        $(".chosenselectdrop").chosen({
+          "disable_search": true
+        });
+        $('.t2drop2').multiselect({
+        
+        buttonWidth: '220px',
+         includeSelectAllOption: true,
+         buttonText: function(options) 
+            {
+                var retStr = "";
+                if (options.length === 0) {
+                   retStr = "None selected";
+                } else if(options.length <=2){
+                   var textArray = [];
+                   $.each(options,function(key,value){
+                       textArray.push($.trim($(value).html()));
+                   });
+                   retStr = textArray.join(",");
+                } else {
+                   retStr = options.length+" selected";
+                }
+                return retStr;
+            }
+        
+        });
+        $( '.rows-pane-2 > .rows').wrap( "<div class='dontwrap2 col-xs-12 col-sm-12 col-md-12 col-lg-12 nopadding' style='padding-bottom:5px;'/>");
+       
+        $('.pop_container .chosen-container').css('width','220px');
+        $(' .rows-pane-2 .chosen-container').css('margin-right','11px');
+     
+        }
+                $('.dropdown-menu:last').css('width','430px');
+                $('.dropdown-menu:last li').css('width','100%');
+                $('.dropdown-menu:last li').css('display','table')
+                $('.dropdown-menu:last a').css('width','50%');
+                $('.dropdown-menu:last a').css('display','table-cell');
+                $('.dropdown-menu:last li').not(':first').append('<input type=text style="margin-left:10px;float:right;" />');
+});
+
+       $(document).on("click", ".remove-icon-p" , function() { $(this).parent().parent().remove(); /*newId=newId-1;*/ });
+       $(document).on("click", ".remove-icon-p2" , function() {
+            $(this).parent().parent().remove();
+});
+       
+});
+        //themes could be modern/bright/grey/paper
+            $(function() {
+                jQuery.syntax({theme: 'paper', blockLayout: 'fixed'});
+            });
+            $(function() {
+            $( "#dialog-1" ).dialog({
+               autoOpen: false,
+               buttons: {
+                  OK: function() {setHdnVal();$(this).dialog("close");}
+               },
+               title: "Set Where Clause",
+            });
+            $( "#dialog-1" ).prev().css('background','#3b8ec2').css('color','white');
+           });
+           
+    function saveTestCls(){
+        saveTestClass($('.code-column').text().toString());
+    }
+           
+    function savePopupData(isSkip){
+            var popdataobj=new Object();
+            var map = new Object(); // or var map = {};
+            var t2map = new Object();
+            var rowsvallist=[];
+            var textValue=$('#poptext').val();
+            
+            popdataobj["textval"]=textValue;
+            rowsvallist.push($("#drop1").val());
+            rowsvallist.push($("#drop2").val());
+            for (i = 0; i <= newId; i++) { 
+              if(i==0){
+                    var v1=$("#drop1").val();
+                    var v2=$("#drop2").val();
+                    if(v1!=undefined && v2!=undefined){
+                        //rowsvallist.push(v2);
+                        map[v1]= v2;
+                     }              
+              }else{
+                var v1=$("#drop1"+i).val();
+                var v2=$("#drop2"+i).val();
+                if(v1!=undefined && v2!=undefined){
+                    //rowsvallist.push(v2);
+                    map[v1]= v2;
+                 }
+              }
+            }
+            
+           // t2map[$("#t2drop1").val()]=$("#t2drop2").val();
+            for (i = 0; i <= newId2; i++){
+                if(i==0){
+                    var v2Val = '';
+                    $($('.dropdown-menu')[i]).find('input:checked').closest('li').find('input[type="text"]').each(function(){
+                        v2Val += $(this).val()+' ,';
+                    });
+                    var v1=$("#t2drop1").val()+'-'+i;
+                    var v2=($("#t2drop2").val()+',^,'+v2Val.substring(0,(v2Val.length-1))).split(',');
+                    if(v1!=undefined && v2!=undefined){
+                        t2map[v1]= v2;
+                    }            
+              }else{
+               var v2Val = '';
+               $($('.dropdown-menu')[i]).find('input:checked').closest('li').find('input[type="text"]').each(function(){
+                    v2Val += $(this).val()+' ,';
+                });
+                var v1=$("#t2drop1"+i).val()+'-'+i;
+                var v2=($("#t2drop2"+i).val()+',^,'+v2Val.substring(0,(v2Val.length-1))).split(',');
+                if(v1!=undefined && v2!=undefined){
+                    t2map[v1]= v2;
+                 }
+              } 
+            }
+            
+            $('.rows-pane .dontwrap').each(function(){
+            //console.log($('.chosen-single span').text());
+             //  rowsvallist.push($('.chosen-single span').text());
+            });
+            popdataobj["rowsvalues"]=map;
+            popdataobj["t2rowsvalues"]=t2map;
+            var qParam = "{!isQueryParam}";
+            var isTrig = $('input[name="isTriger"]:checked').data('trigger');
+              if(qParam){
+                 var vfPage = textValue;
+                 if(vfPage!=null && vfPage!=''){
+                      generateTestData(JSON.stringify(popdataobj),selectedWClause,selectedFields,selectedObjects, selectedProp, selectedVar, noOfRec, selectedConst, vfPage,isSkip,isTrig,$('#objListDropdownMenu option:selected').val(),selectedRTypes,selectedRIDs);        
+                 }else{
+                     generateTestData(JSON.stringify(popdataobj),selectedWClause,selectedFields,selectedObjects, selectedProp, selectedVar, noOfRec,selectedConst,'MyPage',isSkip,isTrig,$('#objListDropdownMenu option:selected').val(),selectedRTypes,selectedRIDs);
+                 }
+              }
+              
+              jQuery.syntax({theme: 'bright', blockLayout: 'fixed'});
+    
+    }       
+</script>
+  <script type="text/javascript">
+    var showhide =1;
+    var showhideCD=0;
+    var selectedProp='';
+    var selectedVar='';
+    var selectedConst='';
+    var selectedWClause = '';
+    var selectedRTypes = ''    
+    var selectedFields='';
+    var selectedObjects='';
+    var noOfRec='';
+    var selectedRIDs = '';
+    var handleFieldClick = function(elm){
+       var chkLen = $(elm).closest('table').find('td input[type="checkbox"]:checked').length;
+       var totLen = $(elm).closest('table').find('td input[type="checkbox"]').length;   
+       if(totLen>chkLen){
+           $(elm).closest('table').find('select option[value="Custom"]').prop("selected",true);
+       }else{
+           $(elm).closest('table').find('select option[value="All"]').prop("selected",true);
+       }
+   }
+   
+        var handleHeader = function(elm){
+           $('#clauseField').text($(elm).closest('table').find('.wc option:selected').text());           
+           var selectedClauseVal = $(elm).closest('table').find('.wc option:selected').val();
+           $( "#dialog-1 input").val('');
+           $( "#dialog-1" ).dialog("open");
+           $( "#dialog-1 input[type='hidden']").val(selectedClauseVal.substring(0,selectedClauseVal.indexOf('.')));
+        }
+        
+        var handleRType = function(elm){
+           var hdnName = $(elm).parents('th').find('.objName').text()+'1';
+           $("input[name="+hdnName+"]").val($(elm).parents('th').find('.objName').text()+'#'+$(elm).val());
+           //$('#clauseField').text($(elm).closest('table').find('.rc option:selected').text());           
+           /*var selectedClauseVal = $(elm).closest('table').find('.wc option:selected').val();
+           $( "#dialog-1 input").val('');
+           $( "#dialog-1" ).dialog("open");
+           $( "#dialog-1 input[type='hidden']").val(selectedClauseVal.substring(0,selectedClauseVal.indexOf('.')));*/
+        }        
+   
+   function setHdnVal(elm){
+           var hdnName = $( "#dialog-1 input[type='hidden']").val();
+           $("input[name="+hdnName+"]").val($('#clauseField').text()+'-'+$( "#dialog-1 input[type='text']").val());
+   }
+    function createICheck(){
+      $('.icheckbox input:checkbox').each(function(){
+            var self = $(this),
+              label = self.next(),
+              label_text = label.text();
+        
+            label.remove();
+            self.iCheck({
+              checkboxClass: 'icheckbox_line-blue',
+              radioClass: 'iradio_line-blue',
+              insert: '<div class="icheck_line-icon"></div>' + label_text
+        });
+      });
+        $('input[type="checkbox"]').prop('checked',false);
+        $('input[type="checkbox"]').closest('div').removeClass('checked');
+        $('input[value*="-M"]').prop('checked',true);
+        $('input[value*="-M"]').closest('div').addClass('checked');
+        $('#infoFields').show();
+        $('#infoFields').tooltip();
+        $('#stp2').hide();
+        $('#second_bottom').css('height','418px');
+        $('.sw-container.tab-content').css('height','755px');
+        
+    }
+    function getClassSelections(){
+     // selectedProp = '';selectedVar = '';selectedConst = '';
+   if(selectedProp.length <1){
+      $('input[name="Prop"]:checked').next().each(function(){
+              selectedProp +=$(this).html().substring(3)+'#';
+      });
+    }
+  if(selectedVar.length <1){
+      $('input[name="Var"]:checked').next().each(function(){
+              selectedVar +=$(this).html().substring(3)+'#';
+      });
+    }
+     if(selectedConst.length <1){  
+      $('input[name*="--Const"]:checked').next('label').each(function(){
+          selectedConst += $(this).html().substring(5)+'--'+$(this).prev().val()+'#';
+      }); 
+      }
+    }
+    function showObjectsFields(){
+    var objLst='';
+      getClassSelections();
+      $('#rightPanel option').each(function(){
+        objLst = objLst + $(this).val()+',';
+     });
+        objLst = objLst.substring(0,(objLst.length-1));
+        if(objLst.split(',').length>2){
+            alert('Free version can create data upto 2 objects only. Please contact at support@tgenbosster.com for advanced features.');
+            return;
+        }        
+        $('.sw-btn-next').removeClass('disabled');
+        showFields(objLst);
+        $('#objFieldSet').slideDown('slow');
+        
+    }
+    function showCD(){
+        var prevLabel='';
+        var index=1;
+        $('input[name="Const"]').each(function(){
+            var labelValue = $(this).next('label').html().substring(5);
+            labelValue = labelValue.substring(0,labelValue.indexOf('('));
+            if(labelValue!=prevLabel){
+                index=1;
+                $(this).replaceWith('<input type="radio" value="'+index+'" name="'+labelValue+'--Const" checked="checked" />');
+            }else{
+                $(this).replaceWith('<input type="radio" value="'+index+'" name="'+labelValue+'--Const" />');
+            }
+            $("input[type='radio']").next().css('background-image','url({!URLFOR($Resource.CustomTree,'images/gr_custom-inputs.png')}').css('background-position','0 -161px');
+            index+=1;
+            prevLabel=labelValue;
+        });
+        $("input[type='radio']").click(function(){
+        $("input[type='radio']").each(function(){
+            $(this).next().css('background-image','url({!URLFOR($Resource.CustomTree,'images/gr_custom-inputs.png')}').css('background-position','0 -161px')
+        });
+            $(this).next().css('background-image','url({!URLFOR($Resource.CustomTree,'images/gr_custom-inputs.png')}').css('background-position','0 -214px')
+        });
+        //jQuery(".tree ul").hide(); 
+          jQuery(".tree li").each(function() {                                                  
+            var handleSpan = jQuery("<span></span>");                            
+            handleSpan.addClass("handle");                                       
+            handleSpan.prependTo(this);                                          
+        
+            if(jQuery(this).has("ul").length > 0) {                              
+              handleSpan.addClass("expanded");                        
+              handleSpan.click(function() {                            
+                var clicked = jQuery(this);                  
+                clicked.toggleClass("expanded collapsed");   
+                clicked.siblings("ul").toggle();             
+              });                                                      
+            }                                                                    
+          });
+          initTree();
+        $('#cdgram').show(1000);
+        $('#info').tooltip('show');
+        $('#infoObj').tooltip();
+        $('#clsD').click(function(){$('#info').tooltip('hide')});
+        $('#stp1').hide();
+        }
+        
+         function initTree() {
+        
+          $('input[type="checkbox"]').change(checkboxChanged);
+        }
+
+          function checkboxChanged() {
+            var $this = $(this),
+                checked = $this.prop("checked"),
+                container = $this.parent(),
+                siblings = container.siblings();
+        
+            container.find('input[type="checkbox"]')
+            .prop({
+                indeterminate: false,
+                checked: checked
+            })
+            .siblings('label')
+            .removeClass('custom-checked custom-unchecked custom-indeterminate')
+            .addClass(checked ? 'custom-checked' : 'custom-unchecked');
+        
+            checkSiblings(container, checked);
+          }
+        
+          function checkSiblings($el, checked) {
+           /* if($('#Prop:checked, #Var:checked').length>0){
+                $('.nextBtn').removeClass('disabled');
+            }else{
+                $('.nextBtn').addClass('disabled');
+            }*/
+            var parent = $el.parent().parent(),
+                all = true,
+                indeterminate = false;
+        
+            $el.siblings().each(function() {
+              return all = ($(this).children('input[type="checkbox"]').prop("checked") === checked);
+            });
+        
+            if (all && checked) {
+              parent.children('input[type="checkbox"]')
+              .prop({
+                  indeterminate: false,
+                  checked: checked
+              })
+              .siblings('label')
+              .removeClass('custom-checked custom-unchecked custom-indeterminate')
+              .addClass(checked ? 'custom-checked' : 'custom-unchecked');
+        
+              checkSiblings(parent, checked);
+            } 
+            else if (all && !checked) {
+              indeterminate = parent.find('input[type="checkbox"]:checked').length > 0;
+        
+              parent.children('input[type="checkbox"]')
+              .prop("checked", checked)
+              .prop("indeterminate", indeterminate)
+              .siblings('label')
+              .removeClass('custom-checked custom-unchecked custom-indeterminate')
+              .addClass(indeterminate ? 'custom-indeterminate' : (checked ? 'custom-checked' : 'custom-unchecked'));
+        
+              checkSiblings(parent, checked);
+            } 
+            else {
+              $el.parents("li").children('input[type="checkbox"]')
+              .prop({
+                  indeterminate: true,
+                  checked: false
+              })
+              .siblings('label')
+              .removeClass('custom-checked custom-unchecked custom-indeterminate')
+              .addClass('custom-indeterminate');
+            }
+          }     
+        
+     function setClassId(){
+         var selectedClassID = $('#controllerDropdownMenu').val();
+        // console.log('setClassId');
+         processClass(selectedClassID);  
+         $(".sw-btn-next").removeClass('disabled');
+     }
+     var propLst = '';
+    function loadClasses() {
+       $('#objFieldSet').hide();
+       $(".sw-btn-next").addClass('disabled');
+       $('.sw-container')
+  
+    $.each($('.leftPanel option'),function(index, value){
+        $('#objListDropdownMenu').append($('<option>', {value:value.text, text:value.text})); 
+    });
+           
+     $('#objListDropdownMenu').trigger("chosen:updated");
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.CodeCoverageController.getClasses}',
+
+            function(result, event){                   
+                if (event.status) {
+                    // Get DOM IDs for HTML and Visualforce elements like this
+                   // document.getElementById('controllerDropdownMenu').innerHTML = result.Name
+                    $.each(result,function(index, value){
+                        $('#controllerDropdownMenu').append($('<option>', {value:value.Id, text:value.Name}));
+                       
+                    });
+                     $('#controllerDropdownMenu').trigger("chosen:updated");
+                   //  $('#dvTriggerObjects').hide();
+                } else if (event.type === 'exception') {
+                    document.getElementById("responseErrors").innerHTML = 
+                        event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                } else {
+                    document.getElementById("responseErrors").innerHTML = event.message;
+                }
+            }, 
+            {escape: true}
+        );
+    }
+    var createTestData = function(elm){
+              selectedConst = selectedConst.substring(0,selectedConst.length-1);
+              selectedObjects ='';noOfRec=0;selectedRTypes='';
+              $('input[name="field"]:checked').each(function(){
+                  selectedFields += $(this).prop("value").split('-')[0] + ",";
+              });
+              selectedFields = selectedFields.substring(0,selectedFields.length-1);
+              
+              $('.rID').each(function(){
+                  if($(this).val()!=''){
+                      selectedRIDs += $(this).val() + "-"+$(this).prop("name").split('-')[0]+',';
+                  }
+              });
+                            
+              selectedRIDs = selectedRIDs.substring(0,selectedRIDs.length-1);
+              
+              $("#rightPanel option").each(function(){
+                    selectedObjects +=$(this).val()+",";  
+              });
+              selectedObjects = selectedObjects.substring(0,selectedObjects.length-1);
+              if(selectedObjects.trim().length>1){
+                  getClassSelections();
+              }
+              $('.fieldSet input[type="number"]').each(function(){
+                  noOfRec += $(this).val()+',';
+              });
+              if(noOfRec.length>0){
+                  noOfRec = noOfRec.substring(0,noOfRec.length-1);
+              }
+              getClassSelections();
+              if(selectedProp.length>0){
+                  selectedProp=selectedProp.substring(0,selectedProp.length-1);
+              }
+              if(selectedVar.length>0){
+                  selectedVar=selectedVar.substring(0,selectedVar.length-1);   
+              }
+              selectedProp= selectedProp.replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+              $.each(selectedObjects.split(','),function(index,value){
+                  if(value.length>0 && $("input[name="+value+"]").val().length>0){
+                      selectedWClause += value+'#'+$("input[name="+value+"]").val()+',';
+                  }
+              });
+              selectedWClause = selectedWClause.substring(0,selectedWClause.length-1);
+                            
+              $.each(selectedObjects.split(','),function(index,value){
+                  if(value.length>0 && $("input[name="+value+"1]").val().length>0 && $("input[name="+value+"1]").val().indexOf('Select Record Type') == -1){
+                      selectedRTypes += $("input[name="+value+"1]").val()+',';
+                  }
+              });              
+              selectedRTypes = selectedRTypes.substring(0,selectedRTypes.length-1);              
+                   
+              var qParam = "{!isQueryParam}";
+              if(qParam){
+                   //$('#drop1 option').remove();
+                   $('#drop1 option').slice(1,$('#drop1 option').length).remove();
+                   $('#drop1').trigger('chosen:updated');
+                   $('label[for="Prop"]').each(function(){
+                       $('#pop-dialog-box #drop1').append($('<option>', {value:$(this).text(), text:$(this).text()}));
+                   });
+                   $('.Meth').each(function(){
+                        var clsName = $(this).parents('ul').parents('li').find('label:first').text();
+                        var metName = $(this).text().substring($(this).text().indexOf(':')+1);
+                       $('#pop-dialog-box #t2drop1').append($('<option>', {value:(clsName+'.'+metName), text:(clsName+'.'+metName)}));
+                   });
+
+                   //$('#drop2 option').remove();
+                   $('#drop2 option').slice(1,$('#drop2 option').length).remove();
+                   $('#drop2').trigger('chosen:updated');
+                   $.each(selectedFields.split(','),function(index,value){
+                       $('#pop-dialog-box #drop2').append($('<option>', {value:value, text:value}));
+                   });
+                   $.each(selectedFields.split(','),function(index,value){
+                       $('#t2drop2').append($('<option>', {value:value, text:value}));
+                   });
+                   
+                   if($('input[name="isTriger"]:checked').data('trigger') == true){
+                      $.each(selectedFields.split(','),function(index,value){
+                           $('#pop-dialog-box #t2drop1').append($('<option>', {value:('UseCase'+(index+1)), text:('UseCase'+(index+1))}));
+                       });
+                        $('#pop-dialog-box #t2drop1').append($('<option>', {value:('UseCase'+(selectedFields.split(',').length+1)), text:('UseCase'+(selectedFields.split(',').length+1))}));
+                   }
+                   
+
+                   
+                    $('#t2drop2').multiselect({
+                    buttonWidth: '220px',
+                    includeSelectAllOption: true,
+                     buttonText: function(options) 
+                        {
+                            var retStr = "";
+                            if (options.length === 0) {
+                               retStr = "None selected";
+                            } else if(options.length <=2){
+                               var textArray = [];
+                               $.each(options,function(key,value){
+                                   textArray.push($.trim($(value).html()));
+                               });
+                               retStr = textArray.join(",");
+                            } else {
+                               retStr = options.length+" selected";
+                            }
+                            return retStr;
+                        }
+                    
+                    });
+                    
+                   $('.chosenselectdrop').trigger("chosen:updated");                    
+
+                    $('.dropdown-menu').css('width','430px');
+                    $('.dropdown-menu li').css('width','100%');
+                    $('.dropdown-menu li').css('display','table')
+                    $('.dropdown-menu a').css('width','50%');
+                    $('.dropdown-menu a').css('display','table-cell');
+                    $('.dropdown-menu li').not(':first').append('<input type=text style="margin-left:10px;float:right;" />');
+
+                 //$( "#pop-dialog-box").dialog("open");
+               /*  var vfPage = prompt("Enter this controller's VF page");
+                 if(vfPage!=null && vfPage!=''){
+                      generateTestData(selectedWClause,selectedFields,selectedObjects, selectedProp, selectedVar, noOfRec, selectedConst, vfPage);        
+                 }else{
+                     generateTestData(selectedWClause,selectedFields,selectedObjects, selectedProp, selectedVar, noOfRec,selectedConst,  'MyPage');
+                 }*/
+              }else{
+                     generateTestData(selectedWClause,selectedFields,selectedObjects, selectedProp, selectedVar, noOfRec,selectedConst, null,selectedRTypes,selectedRIDs);
+              }
+              
+           }
+           
+           var setProperties = function(elm){
+               $('input[name="Prop"]').prop('checked',$(elm).prop('checked'));
+           }
+           
+           var setVariables = function(elm){
+               $('input[name="Var"]').prop('checked',$(elm).prop('checked'));
+           }
+    </script>
+
+     
+</head>
+<apex:form id="frm1">
+<body onload="loadClasses();">
+     <div class="font-css">
+<!--<div class="head-clr">
+<div class="img-head">
+<img width="30" src="images/tgen-img.png"/>
+</div><h2 class="">Test Class Generator for Salesforce <span class="sm-text">Inhance your Producctivity </span></h2>
+</div>-->
+      <div class="row">
+      <div class="col-md-9">
+        <!-- SmartWizard html -->
+    <div id="smartwizard2" class="wiz-theme">
+            <ul>
+                <li><a href="#step-1"><span>1</span>Choose Class/Trigger</a></li>
+                <li><a href="#step-2"><span>2</span>Choose Object/Fields</a></li>
+                <li><a href="#step-3"><span>3</span>Configure Test Cases</a></li>
+                <li><a style="width: 249px;padding-left: 70px;" href="#step-4"><span><i class="fa fa-check"></i></span>Finish</a></li>
+            </ul>
+            
+            <div style="height:470px;">
+                <div id="step-1" class="">
+                    <h3 style="margin-top:10px !important;">Choose Class/trigger object</h3>
+                    <div class="row">
+                    <div class="col-md-6 bdr-right">
+                    <div class="form-group">
+                    <div class="radioon">
+                        <input type="radio" checked='check' id="a-option" data-trigger="false" data-checked="false" name="isTriger"/>
+                        <label for="a-option">Choose Class</label>   
+                        <div class="check"></div>
+                    </div>
+                    <select class="chosenElement form-control" data-placeholder="Select Class" style="width:300px;" id="controllerDropdownMenu">   
+                            <option value=""></option>
+                    </select>
+                    </div>
+                    <div class="form-group"><button id="process" style="margin-left:0px !important" onclick="setClassId();" class="btn btn-default" type="button">Parse</button></div>
+                    </div>
+                    <div class="col-md-6">
+                    <div id="dvTriggerObjects" class="form-group">
+                    <div class="radioon">
+                        <input type="radio" id="b-option" data-trigger="true" data-checked="false" name="isTriger" />
+                        <label for="b-option">Choose Trigger Object</label>   
+                        <div class="check"></div>
+                    </div>
+                    <select class="chosenElement form-control" data-placeholder="Select trigger's object" style="width:300px;"  id="objListDropdownMenu">   
+                            <option value=""></option>
+                    </select>
+                    </div>
+                    </div>
+                    <div class="col-md-12"><hr></hr></div>
+                    <div class="col-md-10 col-md-offset-1">
+                    <div id="stp1" class="div-off">
+                    <p>Choose class and click  "Parse" to see the class diagram</p>
+                    <p>Choose triggers Object and click  "Next" to creat test data</p>
+                    </div>
+                    </div>
+                          <apex:actionFunction status="wait" action="{!processClass}" name="processClass" rerender="pg" >
+                            <apex:param name="selectedClassID" value="" />
+                            </apex:actionFunction>
+                            <apex:actionStatus id="wait" onstop="showCD();">
+                                    <apex:facet name="start">
+                                        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+                                            &nbsp;
+                                        </div>
+                                        <div style="position: fixed; left: 50%; top: 50%; bottom: 0; right: 50%; z-index: 1001; margin: 1% 1%">
+                                            <div style="display: inline-block; padding: 2px;background-color:white">
+                                                <img src="{!URLFOR($Resource.tgen__TestResource,'images/box.gif')}" style="float: left; margin: 8px;" />
+                                               <!--<span style="display: inline-block; padding: 10px 0px;">Loading...</span>-->
+                                            </div>
+                                        </div>
+                                    </apex:facet>
+                            </apex:actionStatus>                    
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="min-height:50px;">
+                     <div id="snippetframe">
+                          <apex:outputPanel id="pg">
+                              <!--Include all Properties: <input type="checkbox" onclick="setProperties(this)" name="propHeader" /><br/>
+                              Include all Variables: <input type="checkbox" onclick="setVariables(this)" name="variableHeader" /><br/>-->
+                               <div style="display:table-cell;width:40%;padding-left:20px;">
+                                    <div id="cdgram" style="display:none;margin-left:20px">
+                                       
+                                    <div class="container">
+                                    <div class="col-xs-8" style="min-height:50px;max-height:224px;overflow:scroll;">
+                                          <div id="clsD">
+                                          
+                              <a href="javascript:void(0)" style="
+                                float: right;
+                                background-color: #337ab7;
+                                color: white !important;
+                                width: 17px;
+                                height: 17px;
+                                text-align: center;
+                                border-radius: 25px;
+                                vertical-align: middle;
+                                font-family: monospace;
+                                cursor: default;"
+                                data-placement="left" id="info" title="Select related Properties/Variables/Parameterized constructor from the list of class metadata in order to include them in test class." data-toggle="tooltip">i</a>
+                            
+                                             <ul class="treeview tree">
+                                                 <apex:repeat value="{!ctLst}" var="ct">
+                                                    <li>
+                                                        <input type="checkbox" name="tall" id="tall"/>
+                                                        <label for="tall" class="custom-unchecked">{!ct.getClass.Label}</label>
+                                                          <ul style="display:block;"> 
+                                                             <apex:repeat value="{!ct.getConstructors}" var="const">                        
+                                                                 <li>
+                                                                     <input type="checkbox" name="Const" id="Const"/>
+                                                                     <label for="Const" class="custom-unchecked">{!const.Label}</label>
+                                                                 </li>
+                                                             </apex:repeat>                                
+                                                             <apex:repeat value="{!ct.getProperties}" var="prop">                        
+                                                                 <li>
+                                                                     <input type="checkbox" name="Prop" id="Prop"/>
+                                                                     <label for="Prop" class="custom-unchecked">{!prop.Label}</label>
+                                                                 </li>
+                                                             </apex:repeat>
+                                                             <apex:repeat value="{!ct.getVariables}" var="varb">                        
+                                                                 <li>
+                                                                     <input type="checkbox" name="Var" id="Var"/>
+                                                                     <label for="Var" class="custom-unchecked">{!varb.Label}</label>
+                                                                 </li>
+                                                             </apex:repeat>
+                                                             <apex:repeat value="{!ct.getMethods}" var="method">                        
+                                                                 <li>
+                                                                     <label for="short-1" class="Meth">{!method.Label}</label>
+                                                                 </li>
+                                                             </apex:repeat>
+                                                        </ul>
+                                                    </li>
+                                                  </apex:repeat>
+                                               </ul>
+                                          </div>    
+                                      </div>
+                            </div>
+                                    </div>
+                                 </div>
+                                 </apex:outputPanel>
+                                 <!-- <pre class="syntax brush-javascript">Hello </pre>-->
+                              </div>    
+                          </div>
+                    
+                    </div>
+                </div>
+                <div id="step-2" class="">
+                    <h3 style="margin-top:10px !important;">Construct Data</h3>
+               <div class="row">
+                  <div class="col-xs-12">
+                    <div class="col-md-12 nopadding">
+                      <div class="col-xs-12 upper_frame nopadding">
+            
+                        
+                        <div class="col-xs-12 col-md-12 col-lg-12 nopadding">
+                                <div class="col-xs-5 display_filter nopadding">
+                                    <input class="col-xs-12 form_control nopadding" id="searchField" placeholder="Type here to filter objects..." type="text"/>
+                                </div>
+                                <div class="col-xs-12 filter_area nopadding" id="desktopView">
+                                    <div class="col-xs-5 visible_fields nopadding">
+                                        <label>Available Objects</label>
+                                        <a data-placement="right" data-toggle="tooltip" href="javascript:void(0)" id="infoObj" style="float: left;background-color: #337ab7;color: white !important;width: 17px;height: 17px;text-align: center;border-radius: 26px;vertical-align: middle;font-family: monospace;cursor: default;" title="" data-original-title="Choose object(s) for which you want to create test data.">i</a>
+                                        <div class="col-xs-12 fields_list nopadding">
+                                         <apex:selectList id="leftPanel"  styleClass="products-box select-minheight leftPanel" value="{!selectedObjects}" size="10" multiselect="true">
+                                             <apex:selectOptions value="{!unSelectedValues}" />
+                                         </apex:selectList>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-xs-1 icons text-center nopadding">
+                                        <div class="icon_right nopadding" id="rightIcon_desktop"><img src="{!URLFOR($Resource.TgenResource,'images/right.png')}" /></div>
+                                        <div class="icon_left nopadding" id="leftIcon_desktop"><img src="{!URLFOR($Resource.TgenResource,'images/left.png')}" /></div>    
+                                     </div>
+                                    
+                                    <div class="col-xs-5 hidden_fields nopadding">
+                                        <label>Selected Objects</label>
+                                        <div class="col-xs-12 fields_list nopadding">
+                                            <select class="products-box select-minheight" id="rightPanel" multiple="multiple" size="10">
+                    
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-1 arrows text-center nopadding">
+                                        <div class="nopadding" id="up-img"><img src="{!URLFOR($Resource.newCustomCSS,'image/up.png')}" /></div>
+                                        <div class="nopadding" id="down-img"><img src="{!URLFOR($Resource.newCustomCSS,'image/down.png')}" /></div>    
+                                     </div>
+                                </div>
+                             
+                            </div>
+            
+                        </div>
+                        <apex:outputPanel id="testData" >
+                          <div class="col-xs-12" style="padding:10px 0px 0px 0px;">
+                            <apex:actionFunction status="process" action="{!moveRight}" name="showFields" rerender="testData" >
+                                <apex:param name="showObjectsFields" value="" />
+                            </apex:actionFunction>
+                        <apex:actionStatus id="process" onstop="createICheck();">
+                        <apex:facet name="start">
+                            <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+                                &nbsp;
+                            </div>
+                            <div style="position: fixed; left: 50%; top: 50%; bottom: 0; right: 0; z-index: 1001; margin: 1% 1%">
+                                <div style="display: inline-block; padding: 2px; background-color: #fff;">
+                                    <img src="{!URLFOR($Resource.tgen__TestResource,'images/box.gif')}" style="float: left; margin: 8px;" />
+                                    <!--<span style="display: inline-block; padding: 10px 0px;">Please Wait...</span>-->
+                                </div>
+                            </div>
+                        </apex:facet>
+                </apex:actionStatus>
+                <div class="form-group" style="margin-bottom:0px;"><button id="showFieldsBtn" onclick="showObjectsFields()" class="btn btn-default disabled"  type="button">Choose object's fields</button></div>
+                
+                <!--<button id="showFieldsBtn" class="btn btn-primary btn-lg pull-left disabled" onclick="showObjectsFields()" type="button">Choose object's fields </button>-->
+                        </div>
+                 <div class="col-md-12 nopadding"><hr></hr></div>       
+                 
+                 <div class="col-xs-12 nopadding" id="second_bottom" style="overflow:scroll;height:180px;"> 
+                    <div class="col-md-10 col-md-offset-1 second-info-div">
+                    <div id="stp2" class="div-off">
+                    <p>Select objects from "Available Objects" list and click on "Choose Object fields"</p>
+                    <p>Select any field from the list of fields. By default all mandatory fields will remain selected</p>
+                    </div>
+                    </div>      
+                 <div id="objFieldSet" class="col-xs-11" style="overflow:scroll;height:400px;">
+                 <a data-original-title="Choose object's fields which you want to include, by default mandatory fields are selected." data-placement="left" data-toggle="tooltip" href="javascript:void(0)" id="infoFields" style="display:none;float: right;background-color: #337ab7;color: white !important;width: 17px;height: 17px;text-align: center;border-radius: 26px;vertical-align: middle;font-family: monospace;cursor: default;">i</a>
+                 <div style="display:table-row">
+                    <apex:repeat value="{!selectedObjFields}" var="colItem">
+                    <table class="fieldSet" style="display:table-cell;">
+                    <tr>
+                        <th style="padding-left:18px;">
+                        <span class="objName">{!colItem}</span><br/>
+                        <div class="styled-select blue semi-square wc" style="display:none;">
+                        <select class="head wc" onchange="handleHeader(this)" >
+                            <option>Select Where Clause</option>
+                            <apex:repeat value="{!selectedObjFields[colItem]}" var="ro">
+                                <option value="{!colItem}.{!ro}">{!Left(ro,Find('-',ro)-1)}</option>
+                            </apex:repeat>
+                        </select>
+                        <input type="hidden" name="{!colItem}"/>
+                        </div>
+                        <div style="margin-top:5px;margin-bottom:5px;" class="styled-select blue semi-square rt">
+                       <!-- <select class="head rt" style="width:95%;" onchange="handleRType(this)">
+                            <option>Select Record Type</option>
+                            <apex:repeat value="{!selectedObjRType[colItem]}" var="ro">
+                                <option value="{!ro}">{!selectedObjRType[colItem][ro]}</option>
+                            </apex:repeat>
+                        </select>-->
+                        <input type="hidden" name="{!colItem}1"/>
+                        </div>
+                        <input type="text" name="{!colItem}-2" style="width:95%" class="col-xs-12 nopadding rID" placeholder="Enter Record ID"/>
+                            <br/>
+                            No. of Rec.<INPUT TYPE="NUMBER" style="width:30px;" MIN="1" MAX="10" STEP="1" VALUE="1" SIZE="2"/>            
+                        </th>
+                    </tr>
+                    <apex:repeat value="{!selectedObjFields[colItem]}" var="ro">
+                    <tr><td>
+                      <div class="col-xs-11 icheckbox" style="padding:0px;">
+                          <div class="col-xs-11 col-md-11 col-lg-11 padding-bottom-10">
+                            <input type="checkbox" onclick="handleFieldClick(this)" name="field" checked="true" value="{!colItem}.{!ro}">
+                               <label>{!Left(ro,Find('-',ro)-1)}</label>
+                            </input>
+                          </div>
+                      </div>            
+            
+                    </td></tr>
+                    </apex:repeat>                       
+                    </table>                       
+                    </apex:repeat>
+                </div></div>  
+                </div>       
+                      </apex:outputPanel>
+            
+                        <!--<div class="col-xs-12" style="padding:10px 15px 20px 0px;">
+                          <div class="form-group"><button id="genTest" onclick="createTestData()" class="btn btn-default pull-right"  type="button">Generate Test Class</button></div>
+                          <button id="genTest" class="btn btn-primary nextBtn btn-lg pull-right " onclick="createTestData()" type="button">Generate Test Class</button>
+                        </div>  -->
+                    </div>
+                  </div>
+    </div>
+                </div>
+                <div id="step-3" class="">
+                 <h3 style="margin-top:10px !important;">Configure Test Cases</h3>
+                   <div id="pop-dialog-box" class="pop_container" >
+                    <div class="main_frame">
+                      <div class="col-xs-12 upper_frame">
+                      <form class="form" role="form">
+                        <div class="col-xs-12 col-md-12 col-lg-12 nopadding" id="tabs">
+                             <ul>
+                                <li><a href="#tab-1">Set VF Page/Property's value</a></li>
+                                <li><a href="#tab-2">Create Test Cases</a></li>
+                              </ul>
+                            <div class="col-xs-12 col-md-12 col-lg-12 nopadding" id="tab-1">
+                                    <div class="col-xs-6 col-md-6 col-lg-6 display_filter nopadding">
+                                    Enter VF page name:
+                                        <input id="poptext" class="col-xs-12 form_control nopadding"  type="text"/>
+                                    </div>
+                                    
+                                   
+                                    
+                                      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 nopadding" style="padding-bottom:5px;padding-top:10px;">
+                                        
+                                        <select class="chosenselectdrop drop1" data-placeholder="Select Property" style="width:225px;" id="drop1">
+                                           <option value=""></option>
+                                        </select>
+                                        
+                                        
+                                        <select class="chosenselectdrop  drop2" data-placeholder="Select Value" style="width:225px;" id="drop2">
+                                           <option value=""></option>               
+                                        </select>
+                                        
+                                        <!--<button id="" class="btn btn-primary add-btn btn-lg pull-right" type="button">Add</button>-->
+                                        <img class="add-icon-p" title="Add" style="padding-left:4px;" src="{!URLFOR($Resource.tgen__Popups,'images/add-p.png')}" />
+                                       </div> 
+                                       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 rows-pane nopadding" style="padding-bottom:10px;padding-top:0px;">
+                                       
+                                       
+                                       </div>
+                                        
+                           </div>
+                            <div class="col-xs-12 col-md-12 col-lg-12 nopadding" id="tab-2">
+                           <span style="font-family:verdana;font-size:10px;color:red;">Note: This version doesn't have an ability to set referenced fields value.</span>
+                               <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 nopadding" style="padding-bottom:10px;padding-top:10px;">
+                                        <select class="chosenselectdrop t2drop1" data-placeholder="Select Method" style="width:220px;" id="t2drop1">
+                                           <option value=""></option>                
+                                        </select>
+                                        <select id="t2drop2" class="t2drop2" multiple="multiple">
+                                        </select>
+                                        <!--<input id="recId" placeholder="Enter Record ID" style="width:220px;height:34px;float:none;" class="col-xs-12 form_control nopadding"  type="text"/>
+                                        <button id="" class="btn btn-primary add-btn btn-lg pull-right" type="button">Add</button>-->
+                                        <img class="add-icon-p2" title="Add" style="padding-left:4px;cursor:pointer;" src="{!URLFOR($Resource.tgen__Popups,'images/add-p.png')}" />
+                                        
+                                        </div> 
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 rows-pane-2 nopadding" style="padding-bottom:10px;padding-top:10px;">
+                                        
+                                        </div>
+                           </div>
+                       </div> 
+                      </form>
+                     </div>
+                    </div>
+                  </div>                
+                </div>
+                <div id="step-4" class="">
+                    <h2 style="margin-top:10px !important;color:#5cb85c;">Wohoo!! </h2>
+<div class="row">
+    <apex:outputPanel id="results" >
+      <div class="col-xs-12">
+        <div class="col-xs-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="min-height:50px;padding-bottom:10px;">
+              <div id="snippetframe">
+                  <pre class="syntax brush-javascript">{!testBody}</pre>
+                  <apex:actionFunction status="processCls" name="generateTestData" action="{!generateTestData}" reRender="results">
+                    <apex:param name="propDataSet" value="" />
+                    <apex:param name="selectedWClause" value="" />
+                    <apex:param name="selectedFields" value="" />
+                    <apex:param name="selectedObjects" value="" />
+                    <apex:param name="selectedProp" value="" />
+                    <apex:param name="selectedVar" value="" />
+                    <apex:param name="noOfRec" value="" />
+                    <apex:param name="selectedConst" value="" />
+                    <apex:param name="vfPage" value="" />
+                    <apex:param name="isSkip" value="" />
+                    <apex:param name="isTrigger" value="" />
+                    <apex:param name="trigObj" value="" />
+                    <apex:param name="selectedRTypes" value="" />
+                    <apex:param name="selectedRIDs" value="" />                    
+                </apex:actionFunction>
+                <apex:actionStatus id="processCls">
+                    <apex:facet name="start">
+                        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+                            &nbsp;
+                        </div>
+                        <div style="position: fixed; left: 50%; top: 50%; bottom: 0; right: 0; z-index: 1001; margin: 1% 1%">
+                            <div style="display: inline-block; padding: 2px; background-color: #fff;">
+                                <img src="{!URLFOR($Resource.tgen__TestResource,'images/box.gif')}" style="float: left; margin: 8px;" />
+                            </div>
+                        </div>
+                    </apex:facet>
+                </apex:actionStatus>
+              </div>    
+          </div>
+        <div class="col-xs-12">
+          <!--<button class="btn btn-success btn-lg pull-right" onclick="saveTestCls();" type="button">Save</button>-->
+          <button class="btn btn-success btn-lg pull-right" onclick="location.reload()" type="submit">Create New Test Class</button>
+            <!--<apex:actionFunction status="saveCls" name="saveTestClass" action="{!saveTestClass}" reRender="results">
+              <apex:param name="tstBody" value="" />
+            </apex:actionFunction>-->
+        <apex:actionStatus id="saveCls">
+            <apex:facet name="start">
+                <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+                    &nbsp;
+                </div>
+                <div style="position: fixed; left: 50%; top: 50%; bottom: 0; right: 0; z-index: 1001; margin: 1% 1%">
+                    <div style="display: inline-block; padding: 2px; background-color: #fff;">
+                        <img src="{!URLFOR($Resource.tgen__TestResource,'images/box.gif')}" style="float: left; margin: 8px;" />
+                    </div>
+                </div>
+            </apex:facet>
+        </apex:actionStatus>          
+        </div>
+        </div>
+      </div>
+      </apex:outputPanel>
+    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+            <div class="col-md-3">
+        <div class="clc-ovel">
+        <h2>Test Class Performance</h2>
+        <div class="clc-content">
+        <img width="90%"  src="{!URLFOR($Resource.TgenResource,'images/chart.png')}"/>
+        <div class="clc-overlay"><span> </span></div>
+        </div>
+        </div>
+        <div class="clc-ovel">
+        <h2>Each Test Result</h2>
+        <div class="clc-content1">
+        <img width="90%"  src="{!URLFOR($Resource.TgenResource,'images/passed.png')}"/>
+        <div class="clc-overlay"><span> </span></div>
+        </div>
+        </div>
+        
+        
+        </div>
+        
+        </div>
+     
+        <div id = "dialog-1" title = "Dialog Title goes here..."><label id="clauseField"/>
+         <input style="border-radius:3px;border-style:double;border-width:1px;" type="text" />
+         <input type="hidden"/>
+</div>
+        
+    </div>
+    
+
+
+     <script type="text/javascript">
+        $(document).ready(function(){
+            
+            // Smart Wizard 2
+            $('#smartwizard2').smartWizard({ 
+                    selected: 0, 
+                    theme: 'default',
+                    transitionEffect:'fade',
+                    showStepURLhash: false
+            });
+            
+            $(".sw-btn-next").on("click", function() {
+                // Navigate Next
+                
+                if($('#step-2').is(':visible')){
+                
+                    createTestData();
+                    
+                }else if($('#step-3').is(':visible')){ 
+                console.log("33");
+                
+                    savePopupData(true);
+                }
+            });
+          
+        }); 
+          
+    </script>
+        <style>
+        .sw-theme-default > ul.step-anchor > li > a{
+            padding-right:25px !important;
+        }
+        .clc-content{
+            min-height:250px;
+        }
+        .clc-content1{
+            min-height:250px;
+        }
+    input[type=checkbox].css-checkbox{
+        position: absolute;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        height: 1px;
+        width: 1px;
+        margin: -1px;
+        padding: 0;
+        border: 0;
+    }
+    .lite-blue-check {
+        background-image: url(http://csscheckbox.com/checkboxes/lite-blue-check.png);
+    }
+        input[type=checkbox].css-checkbox + label.css-label {
+        padding-left: 20px;
+        height: 15px;
+        display: inline-block;
+        line-height: 15px;
+        background-repeat: no-repeat;
+        background-position: 0 0;
+        font-size: 15px;
+        vertical-align: middle;
+        cursor: pointer;
+    }
+        input[type=checkbox].css-checkbox:checked + label.css-label {
+        background-position: 0 -15px;
+        }
+        .tooltip-inner{
+                max-width: 350px;
+                width: 350px;
+                text-align:left;
+                }
+          .tooltip{
+              top:0px !important
+          }
+    .head option{
+        color:black;
+    }
+     .Meth{
+         background:none !important;
+         margin-left:6px !important;
+     }
+    
+    </style>
+    <style>
+    .chosen-container{
+        display: block;
+        background-color: #fff;
+    }
+    #pop-dialog-box .chosen-container{
+        display: inline-block;
+    }
+    .chosen-container .chosen-drop {
+        position: absolute;
+        top: 100%;
+        left: -9999px;
+        z-index: 1010;
+        width: 100%;
+        border: 1px solid #ccc;
+        border-top: 0;
+        background: #fff;
+        box-shadow: 0 4px 5px rgba(0,0,0,0.15);
+    }
+    .chosen-container-single .chosen-single span {
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: inherit;
+    }
+    .chosen-container-single .chosen-single{
+        color: #555;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    }
+    .chosen-container-active.chosen-with-drop{
+        background-color: #fff;
+        
+    }
+    .chosen-container-active.chosen-with-drop .chosen-single {
+    border: 1px solid #ccc;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        background: transparent;
+    }
+    .chosen-container-active.chosen-with-drop .chosen-single div b{
+        background-position: -18px 7px !important;
+    }
+    .products-box option{
+        border-bottom: 1px #eee solid;
+        padding-top:10px;
+        padding-bottom:10px;
+        padding-left:5px;
+    }
+    .products-box option:last-child {
+        border-bottom: 0px #eee solid;
+    }
+    .filter_area .visible_fields .fields_list .products-box, .filter_area .hidden_fields .fields_list .products-box{
+        border-radius: 4px;
+    }
+    #searchField {
+        border-radius: 4px;
+       
+    }
+    .form_control {
+        border-radius: 4px;
+        border-style: double;
+        padding: 6px 8px;
+        line-height: 16px;
+        border: 1px solid #bbb;
+    }
+    
+    .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor, .ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor, .ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
+        border-top: 2px solid #0096fd;
+        color: #1589ee;
+        background: #f5f7f9 !important;
+        border-left: 1px solid #e9edf2;
+        border-right: 1px solid #e9edf2;
+        
+    }
+    a:focus{
+        outline: none;
+    }
+    .fields_list .select-minheight {
+        height: 140px;
+    }
+    .filter_area .icons {
+        padding-top: 50px;
+    }
+    .icheckbox_line-blue.checked, .iradio_line-blue.checked {
+        background: #4BCA81;
+    }
+    .icheckbox_line-blue.checked.hover{
+        background: #62e097;
+    }
+    .filter_area .arrows {
+        padding-top: 64px;
+    }
+    .ui-tabs .ui-tabs-nav{
+        padding: 0px;
+        border-bottom: 2px solid #0096fd;
+    }
+    .ui-widget-header{
+        border: 0px;
+    }
+    .ui-tabs .ui-tabs-nav li{
+        margin: 0px;
+    }
+    .ui-tabs .ui-tabs-nav li.ui-tabs-active{
+        margin-bottom: -2px;
+        padding-bottom: 0px;
+    }
+    .ui-tabs .ui-tabs-nav .ui-tabs-anchor{
+        color: #1589ee;
+    }
+    .ui-widget-header{
+        background: #fff;
+    }
+    .ui-corner-all, .ui-corner-top, .ui-corner-right, .ui-corner-tr{
+        border-top-right-radius: 0px;
+        border-top-left-radius: 0px;
+    }
+    .ui-tabs-tab, .ui-corner-top, .ui-state-default, .ui-tab, ui-state-hover{
+        background: #fff !important;
+        border: 0px !important;
+    }
+    .multiselect.dropdown-toggle.btn.btn-default{
+        background: none;
+    }
+    .multiselect.dropdown-toggle.btn.btn-default:focus, .multiselect.dropdown-toggle.btn.btn-default:hover{
+        background: none;
+    }
+    .multiselect.dropdown-toggle.btn.btn-default.active.focus, .multiselect.dropdown-toggle.btn.btn-default.active:focus,
+    .multiselect.dropdown-toggle.btn.btn-default.active:hover, .multiselect.dropdown-toggle.btn.btn-default:active.focus{
+        background: none;
+    }
+    .sw-theme-default > ul.step-anchor{
+        border-top-left-radius: 45px;
+        border-bottom-left-radius: 49px;
+        border-top-right-radius: 45px;
+        border-bottom-right-radius: 49px;
+    }
+    ul.step-anchor > li > a span{
+        margin-top: -6px;
+    }
+    #smartwizard2 > ul > li:nth-child(4) > a > span > i{
+        margin-top: 6px;
+    }
+       
+    </style>
+</body>
+</apex:form>
+</html>
+</apex:page>

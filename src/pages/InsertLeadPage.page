@@ -1,0 +1,38 @@
+<apex:page controller="InsertLeadController">
+    <script>
+    function validate() {
+        if(Document.getElementById('j_id0:LF:LDB:firstName').value == ''){
+        actFunc();
+            alert('FirstName is required field!');
+        } else {
+            
+            alert('Account has been inserted.');
+        }
+    }
+    </script>
+    <apex:form id="LF">
+        <apex:actionFunction action="{!submitLead}" name="actFunc" reRender="LDB"/>
+        <apex:pageBlock title="Lead Form - Enter Lead Details" id="LDB">
+            <table>
+                <tr>
+                    <td><apex:outputText value="First Name" /></td>
+                    <td><apex:inputField value="{!l.FirstName}" id="firstName"/></td>
+                    <p id="firstNameError" style="color:red;"></p>
+                </tr>
+                <tr>
+                    <td><apex:outputText value="Last Name" /></td>
+                    <td><apex:inputField value="{!l.LastName}" id="LName"/></td>
+                </tr>
+                <tr>
+                    <td><apex:outputText value="Company" /></td>
+                    <td><apex:inputField value="{!l.Company}" id="comp"/></td>
+                </tr>
+                <tr>
+                    <td><apex:outputText value="Lead Status" /></td>
+                    <td><apex:inputField value="{!l.Status}"/></td>
+                </tr>
+            </table>
+            <apex:commandButton value="Save" onclick="validate();"/>
+        </apex:pageBlock>  
+    </apex:form>
+</apex:page>

@@ -1,0 +1,26 @@
+<apex:page standardController="Case">
+    <apex:form >
+        <apex:pageBlock title="Case Details">
+            <table>
+                <tr>
+                    <th>Case #</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Subject</th>
+                    <th>Created By</th>
+                    <th>Type</th>
+                    <th>Created Date</th>
+                </tr>
+                <tr>
+                    <td>{!Case.CaseNumber}</td>
+                    <td>{!Case.Priority}</td>
+                    <td>{!Case.Status}</td>
+                    <td>{!Case.Subject}</td>
+                     <td>{!Case.CreatedBy}</td>
+                    <td>{!Case.Type}</td>
+                    <td>{!Case.CreatedDate}</td>
+                </tr>
+            </table>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

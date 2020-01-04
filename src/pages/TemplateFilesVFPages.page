@@ -1,0 +1,39 @@
+<apex:page controller="TemplateFileController" title="Child Page" showHeader="false">
+<h1 style="color:blue">Template Lookup </h1> <br/><br/><br/>
+	<apex:form title="Child Page">
+		<apex:pageBlock title="Search">
+			<apex:pageBlockSection >
+				<apex:pageBlockSectionItem >
+					 <apex:inputText value="{!searchValue}" >
+						<apex:actionSupport event="onkeyup" action="{!onkeyupAction}" reRender="one"/>
+						<apex:actionSupport event="onchange" action="{!onkeyupAction}" reRender="one"/>
+					</apex:inputText>
+					<apex:commandButton value="Go!" action="{!searchAction}" />
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:form>
+	<apex:form title="Child Page" id="one">
+		<apex:pageBlock title="Details" rendered="{!render1}">
+			<apex:pageMessages ></apex:pageMessages>
+			<apex:pageBlockTable value="{!tempfolders}" var="temp">
+				<apex:column headerValue="Files Name">
+					  <apex:outputLink value="#" onclick="fillIn('{!temp.Id}')">
+					{!temp.Name}
+					</apex:outputLink>
+				</apex:column>
+			</apex:pageBlockTable>
+		</apex:pageBlock>
+	</apex:form>
+	<script>
+		function fillIn(id) {
+			console.log(id);
+			var winMain=window.opener;
+			if(null==winMain) {
+				winMain=window.parent.opener;
+			}
+			winMain.closeLookupPage1(id);
+		}
+		
+	</script>
+</apex:page>

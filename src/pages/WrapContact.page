@@ -1,0 +1,38 @@
+<apex:page controller="WrapContact" sidebar="false">
+    <script type="text/JavaScript">
+    	function selectAllCheckBoxes(Obj,inputID){
+        	var inputCheckBox = document.getElementsByTagName('input');
+            for(var i=0;i<inputCheckBox.length;i++) { 
+                	if(inputCheckBox[i].id.indexOf(inputID)!=-1){ 
+                    	inputCheckBox[i].checked = Obj.checked;
+                    }
+               }
+        }
+    </script>
+    <apex:form >
+    	<apex:pageBlock >
+        	<apex:pageBlockButtons >
+            	<apex:commandButton value="Show Selected Contacts" action="{!allSelected}" reRender="table2"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="All Contacts" collapsible="false" columns="2">
+            	<apex:pageBlockTable value="{!wrContactList}" var="cWrap" id="table" title="All Contacts">
+                    <apex:column >
+                        <apex:facet name="header">
+                            <apex:inputCheckbox onclick="selectAllCheckBoxes(this,'inputId')"/>
+                        </apex:facet>
+                        <apex:inputCheckbox value="{!cWrap.selected}" id="inputId"/>
+                    </apex:column>
+                    <apex:column value="{!cWrap.con.Name}"/>
+                    <apex:column value="{!cWrap.con.Email}"/>
+                    <apex:column value="{!cWrap.con.Phone}"/>
+                </apex:pageBlockTable>
+                <apex:pageBlockTable value="{!selectedContactLists}" var="c" id="table2" title="Selected Contacts">
+                    <apex:column value="{!c.Name}" headerValue="Contact Name"/>
+                    <apex:column value="{!c.Account.Name}" headerValue="Account Name"/>
+                    <apex:column value="{!c.Email}" headerValue="Contact Email ID"/>
+                    <apex:column value="{!c.Phone}" headerValue="Contact Phone Number"/>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
